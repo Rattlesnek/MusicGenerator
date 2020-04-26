@@ -1,7 +1,9 @@
 import sys
-import os
-import gp_to_midi
-import time
+import os.path
+from gputils import GpConverter
+
+gpToMidiConverterPath = "../other/GuitarPro-to-Midi/Convert.exe"
+converter = GpConverter(gpToMidiConverterPath)
 
 try:
     src_dir = sys.argv[1]
@@ -23,8 +25,8 @@ for file in os.listdir(src_dir):
         continue
 
     try:
-        gp_to_midi.gp_to_midi(gp_name, midi_name)
-    except gp_to_midi.ConvertError as err:
+        converter.gpToMidi(gp_name, midi_name)
+    except GpConverter.ConvertError as err:
         print('# Error conversion:', err)
         err_cnt += 1
 

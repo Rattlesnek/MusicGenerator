@@ -3,9 +3,8 @@ import os.path
 import re
 import json
 import guitarpro as gp 
-from cut_part_gp import cut_part_guitarpro
-from occurence import group_marker_names, group_track_names
-import time
+from gputils import GpUtils
+from aggregate import AggregateNames
 
 class SongStatError(Exception) : pass
 
@@ -20,7 +19,7 @@ def get_part_interval(song_stat, part_type):
             # advanced cleanse and group markers            
             marker = re.sub('[0-9]', '', marker).strip()
             marker = re.sub('\si+', '', marker).strip()
-            marker = group_marker_names(marker)
+            marker = AggregateNames.groupMarkerNames(marker)
             
             # chorus ends at this measure
             if isChorus:
@@ -89,7 +88,7 @@ def find_best_guitar_track(song, song_stat, start, end):
     for track_id, track in song_stat['tracks'].items():
         track_id = int(track_id) - 1 # stats counts track_id from 1, pyGP from 0 
         adjusted_name = track['name'].lower().strip()
-        adjusted_name = group_track_names(adjusted_name)
+        adjusted_name = AggregateNames.groupTrackNames(adjusted_name)
         
         priority = calc_track_priority(adjusted_name)
         perc = calc_played_percentage(song.tracks[track_id], start, end)
@@ -136,7 +135,7 @@ def cut_chorus(stat_name, stat, path_gp_folder, path_out_folder):
         return
     # print('best track:', track_id)
     
-    part = cut_part_guitarpro(song, track_id, start, end)
+    part = GpUtils.extractPart(song, track_id, start, end)
     
     part_name = 'chorus1_' + stat_name.replace('/', '#').replace(' ', '_')
     print(part_name)
@@ -155,15 +154,6 @@ if __name__ == "__main__":
     with open(json_file, 'r') as fj:
         stats = json.load(fj)
 
-
-    start_time = time.time()
-    
     for stat_name, stat in stats.items():
         cut_chorus(stat_name, stat, path_gp_folder, path_out_folder)
-    
-    print(time.time() - start_time)
-
-    
-
-
-        
+      
