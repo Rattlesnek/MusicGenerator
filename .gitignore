@@ -1,0 +1,21 @@
+# folder
+tmp
+logs
+jupyter
+
+# pycache
+__pycache__
+
+# .vscode and .ipynb
+.*
+
+# files
+*.midi
+*.txt
+*.gp*
+*.json
+*.np
+
+# ipynb
+*.ipynb
+
