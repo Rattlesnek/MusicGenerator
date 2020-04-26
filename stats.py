@@ -130,18 +130,18 @@ if __name__ == '__main__':
     except IndexError:
         print('Use: gpstats.py [gp_dir] [stat_out_file]')
         sys.exit(1)
-
+    log = ''
     cnt_all = 0
     cnt_mark = 0
     cnt_corrupt = 0
-    for filename in glob.iglob(root_dir + '**/**', recursive=True):
+    for filename in glob.iglob(root_dir + '**/*.gp*', recursive=True):
         filename = os.path.realpath(filename)
         if os.path.isfile(filename):
-            print(filename)
+            print(cnt_all, ' ', filename)
             try:
                 hasMarkers = statistics(filename)
             except:
-                print(' === ERROR -- corrupted file ===')
+                print('=== ERROR -- corrupted file ===')
                 cnt_corrupt += 1
             if hasMarkers:
                 cnt_mark += 1
@@ -154,6 +154,13 @@ if __name__ == '__main__':
     print('all:', cnt_all)
     print('mark:', cnt_mark)
     print('corrupt:', cnt_corrupt)
+    
+    log += 'all:     ' + str(cnt_all) + '\n'
+    log += 'mark:    ' + str(cnt_mark) + '\n'
+    log += 'corrupt: ' + str(cnt_corrupt) + '\n'
+
+    with open('log.txt', 'w') as fout:
+        fout.write(log)
 
 
 
