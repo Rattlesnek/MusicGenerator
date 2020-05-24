@@ -1,8 +1,12 @@
+"""
+Bachelor's thesis: Generation of guitar tracks utilizing knowledge of song structure
+Author: Adam Pankuch
+"""
 import sys
 import glob
 import os.path
 import json
-from gputils import GpUtils
+import gputils
 
 
 if __name__ == '__main__':
@@ -11,11 +15,12 @@ if __name__ == '__main__':
         statsOutPath = sys.argv[2]
         logOutPath = sys.argv[3]
     except IndexError:
-        print('Use: stats.py [gpDirpath] [statsOutPath] [logOutPath]')
+        print('Use: python stats.py [gp-dir-path] [stats.json] [log.txt]')
         sys.exit(1)
 
     stats = {}
 
+    # iterate through all files and save statistics of songs with markers
     cnt_all = 0
     cnt_mark = 0
     cnt_corrupt = 0
@@ -24,7 +29,7 @@ if __name__ == '__main__':
         if os.path.isfile(filename):
             print(cnt_all, ' ', filename)
             try:
-                songStat = GpUtils.getSongStatistics(filename)
+                songStat = gputils.getSongStatistics(filename)
                 if songStat is not None:
                     stats[relativeFilename] = songStat
                     cnt_mark += 1

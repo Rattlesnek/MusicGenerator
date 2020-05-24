@@ -15,5 +15,8 @@ __pycache__
 *.json
 *.np*
 *.zip
+*.eps
+*.png
 
+*.ipynb
 
