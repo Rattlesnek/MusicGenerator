@@ -1,7 +1,6 @@
 # folder
-tmp
-logs
-jupyter
+tmp/
+gpjson/
 
 # pycache
 __pycache__
@@ -14,8 +13,10 @@ __pycache__
 *.txt
 *.gp*
 *.json
-*.np
+*.np*
+*.zip
+*.eps
+*.png
 
-# ipynb
 *.ipynb
 

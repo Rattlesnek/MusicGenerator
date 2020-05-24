@@ -1,42 +1,44 @@
+"""
+Bachelor's thesis: Generation of guitar tracks utilizing knowledge of song structure
+Author: Adam Pankuch
+"""
 import sys
 import os
 import pretty_midi
 import numpy as np
 
-# because I use neural network which has input of size 40
 #################
-fs = 20
+fs = 20 # sampling frequency of midi --> pianoroll conversion
 #################
-batch_size = 500
+batch_size = 500 # size of the batch of pianorolls
 #################
-lower_len_bnd = 160
-upper_len_bnd = 600
+lower_len_bnd = 160 # minimal length of a pianoroll
+upper_len_bnd = 600 # maximal length of a pianoroll
 #################
 
 def midi_to_pianoroll(midi_name, fs):
-    # open midi
+    """Creates pianoroll from a midi."""
     midi = pretty_midi.PrettyMIDI(midi_name)
     # create pianoroll from midi with given sample freqency
     pianoroll = midi.get_piano_roll(fs)
     # return pianoroll which contains only zeros and ones
-    # number 50 was picked because it is suitable for our data (see ipynb)
+    # number 50 was picked because it is suitable for our data
     return (pianoroll >= 50).astype(float)
 
-
 def used_notes(pianoroll):
+    """Finds what pitches of notes were used in the song."""
     notes_sum = np.sum(pianoroll, axis=1)
     return np.nonzero(notes_sum)[0]
 
-
 def preprocess_batch(batch):
+    """Sorts a batch of pianorolls."""
     return sorted(batch, key=lambda x: np.size(x, axis=1))
 
-
 def save_batch(id_batch, batch, dst_dir):
+    """Saves a batch of pianorolls."""
     npz_name = os.path.join(dst_dir, 'batch' + str(id_batch) + '.npz')
     # save batch of pianorolls to .npz archive for efficiency
     np.savez_compressed(npz_name, *batch)
-
 
 
 if __name__ == "__main__":
@@ -44,7 +46,7 @@ if __name__ == "__main__":
         src_dir = sys.argv[1]
         dst_dir = sys.argv[2]
     except IndexError:
-        print('Wrong arguments!')
+        print('Use: python convert_midi_to_npz.py [midi-dir-path] [npz-dir-path]')
         sys.exit(1)
 
     cnt = 0
@@ -82,7 +84,7 @@ if __name__ == "__main__":
         # add pianoroll to batch -- batch will be converted to .npz archive for efficiency
         batch.append(pianoroll)
 
-        # if batch is large enough -> save batch
+        # if batch is large enough --> save batch
         if len(batch) == batch_size:
             id_batch += 1
             print(' -- batch', id_batch)
@@ -93,7 +95,7 @@ if __name__ == "__main__":
             batch = []
 
 
-    # if there are some pianorolls in batch left -> save batch
+    # if there are some pianorolls in batch left --> save batch
     if len(batch) != 0:
         print('last batch len:', len(batch))
         overflow = len(batch) % 10
